@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function SearchMovies(){
 
@@ -21,13 +21,17 @@ function SearchMovies(){
 	//const apiKey = 'cb48806a'; // Intenta poner cualquier cosa antes para probar
 
 	const [ movies, setMovies ] = useState([])
-	//const [ apiKey, setApiKey ] = useState('cb48806a')
-	//const [ keyword, setKeyword ] = useState('action')
-
-	const keyword = 'action'
+	const [ keyword, setKeyword ] = useState('action')
+	const searchKeyWord = useRef() 
 	const apiKey = 'cb48806a'
 
-	useEffect(()=>{
+	const searchMovies = async(e)=>{
+		e.preventDefault()
+		await setKeyword(searchKeyWord.current.value)
+		searchKeyWord.current.value = ''
+	}
+
+	/* useEffect(()=>{
 		console.log('%cse montó el componente', 'color: green')
 		fetch(`http://www.omdbapi.com/?s=${keyword}&apikey=${apiKey}`)
 		.then(response => response.json())
@@ -35,11 +39,26 @@ function SearchMovies(){
 			setMovies(data.Search)
 		})
 		.catch(e => console.log(e))
-	},[])
+	},[]) */
 
 	useEffect(()=>{
-		console.log('%cse actualizó el componente', 'color: blue')
+		console.log('%cse actualizó el componente movies', 'color: blue')
 	},[movies])
+
+	useEffect(()=>{
+		console.log('%cse actualizó el componente keyword', 'color: red')
+		fetch(`http://www.omdbapi.com/?s=${keyword !== ''? keyword : 'action'}&apikey=${apiKey}`)
+		.then(response => response.json())
+		.then(data => {
+			if (!data.Error) {
+				setMovies(data.Search);
+			} else {
+				setMovies([]);
+			}
+			console.log('La cantidad de películas es: ', movies)
+		})
+		.catch(error => console.log(error)) 
+	},[keyword])
 
 	return(
 		<div className="container-fluid">
@@ -49,10 +68,10 @@ function SearchMovies(){
 					<div className="row my-4">
 						<div className="col-12 col-md-6">
 							{/* Buscador */}
-							<form method="GET">
+							<form onSubmit={searchMovies} method="GET">
 								<div className="form-group">
 									<label htmlFor="">Buscar por título:</label>
-									<input type="text" className="form-control" />
+									<input ref={searchKeyWord} name="keyWord" type="text" className="form-control" />
 								</div>
 								<button className="btn btn-info">Search</button>
 							</form>

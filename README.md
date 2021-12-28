@@ -2,6 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## React-Movies
+
+This project consists in fetched movies from OMDb API and shown on react view implemented with hooks. So that this app can run, you need to get an API Key from OMDb API and replace it on the URL of useEfect hook related with keyword on SearchMovies component.
 ## Available Scripts
 
 In the project directory, you can run:
